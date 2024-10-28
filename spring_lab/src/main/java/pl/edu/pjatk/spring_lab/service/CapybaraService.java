@@ -14,10 +14,12 @@ public class CapybaraService {
     List<Capybara> capybaraList = new ArrayList<>();
 
     private CapybaraRepository repository;
+    private StringUtilsService stringUtilsService;
 
-    public CapybaraService(CapybaraRepository repository) {
+
+    public CapybaraService(CapybaraRepository repository, StringUtilsService stringUtilsService) {
         this.repository = repository;
-
+        this.stringUtilsService = stringUtilsService;
         this.repository.save(new Capybara("Maksymilian", "brown"));
         this.repository.save(new Capybara("Jakub", "grey"));
         this.repository.save(new Capybara("Maciej", "beige"));
@@ -32,14 +34,21 @@ public class CapybaraService {
     }
 
     public void add(Capybara capybara) {
+        capybara.setColor(this.stringUtilsService.toUpperCase(capybara.getColor()));
+        capybara.setName(this.stringUtilsService.toUpperCase(capybara.getName()));
         this.capybaraList.add(capybara);
     }
 
     public Optional<Capybara> getCapybara(Long id) {
-        return this.repository.findById(id);
+
+        Optional<Capybara> capybara = this.repository.findById(id);
+        if (capybara.isPresent()) {
+            capybara.get().setColor(this.stringUtilsService.toLowerCase(capybara.get().getColor()));
+            capybara.get().setName(this.stringUtilsService.toLowerCase(capybara.get().getName()));
+            return capybara;
+        } else {
+            return Optional.empty();
+        }
     }
-    // ===================
-//    public void delete(Capybara capybara) {
-//        this.capybaraList.remove(capybara);
-//    }
+
 }
