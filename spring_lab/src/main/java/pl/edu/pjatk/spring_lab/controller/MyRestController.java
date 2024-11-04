@@ -1,12 +1,13 @@
 package pl.edu.pjatk.spring_lab.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pjatk.spring_lab.model.Capybara;
 import pl.edu.pjatk.spring_lab.service.CapybaraService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class MyRestController {
@@ -19,23 +20,25 @@ public class MyRestController {
     }
 
     @GetMapping("capybara/name/{name}")
-    public List<Capybara> getByName(@PathVariable String name) {
-        return this.capybaraService.getCapybaraByName(name);
+    public ResponseEntity<List<Capybara>> getByName(@PathVariable String name) {
+        return new ResponseEntity<>(this.capybaraService.getCapybaraByName(name), HttpStatus.OK);
     }
 
     @GetMapping("capybara/all")
-    public List<Capybara> getAll() {
-        return this.capybaraService.getCapybaraList();
+    public ResponseEntity<List<Capybara>> getAll() {
+        return new ResponseEntity<>(this.capybaraService.getCapybaraList(), HttpStatus.OK);
     }
 
     @GetMapping("capybara/{id}")
-    public Optional<Capybara> get(@PathVariable Long id) {
-        return this.capybaraService.getCapybara(id);
+    public Capybara get(@PathVariable Long id) {
+        this.capybaraService.getCapybara(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("capybara")
-    public void addCapybara(@RequestBody Capybara capybara) {
+    public ResponseEntity<Void> addCapybara(@RequestBody Capybara capybara) {
         this.capybaraService.add(capybara);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
 

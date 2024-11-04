@@ -1,7 +1,8 @@
 package pl.edu.pjatk.spring_lab.service;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import pl.edu.pjatk.spring_lab.exception.CapybaraNotFoundException;
+import pl.edu.pjatk.spring_lab.exception.WrongDataException;
 import pl.edu.pjatk.spring_lab.model.Capybara;
 import pl.edu.pjatk.spring_lab.repository.CapybaraRepository;
 
@@ -37,18 +38,18 @@ public class CapybaraService {
         capybara.setColor(this.stringUtilsService.toUpperCase(capybara.getColor()));
         capybara.setName(this.stringUtilsService.toUpperCase(capybara.getName()));
         this.capybaraList.add(capybara);
-    }
-
-    public Optional<Capybara> getCapybara(Long id) {
-
-        Optional<Capybara> capybara = this.repository.findById(id);
-        if (capybara.isPresent()) {
-            capybara.get().setColor(this.stringUtilsService.toLowerCase(capybara.get().getColor()));
-            capybara.get().setName(this.stringUtilsService.toLowerCase(capybara.get().getName()));
-            return capybara;
-        } else {
-            return Optional.empty();
+    if (capybara.getName() == null || capybara.getName().isEmpty()) ||
+        capybara.getColor() == null || capybara.getColor().isEmpty() {
+        throw new WrongDataException();
         }
     }
 
+    public Capybara getCapybara(Long id) {
+
+        Optional<Capybara> capybara = this.repository.findById(id);
+        if (capybara.isEmpty()) {
+            throw new CapybaraNotFoundException();
+            }
+        }
+    }
 }
